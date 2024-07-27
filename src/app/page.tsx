@@ -1,112 +1,293 @@
+"use client";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { supabase } from "./lib/client";
+import FormElement from "@/components/FormElement";
+import { ClipLoader } from "react-spinners";
+import SelectInput from "@/components/SelectInput";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Home() {
+  const [billData, setBillData] = useState("");
+  const [inputs, setInputs] = useState({
+    bill_no: "",
+    name: "",
+    stream: "",
+    college_id: "",
+    email: "",
+    phone: "",
+    payment_mode: "",
+    transaction_id: "",
+    note: "",
+    receiver: "",
+    date: formatDate(new Date().toLocaleDateString()),
+  });
+  const [isSubmitted, setIsSubmitted] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(false);
+  useEffect(() => {
+    const areAllFieldsFilled = () => {
+      return (
+        inputs.bill_no !== "" ||
+        inputs.name !== "" ||
+        inputs.stream !== "" ||
+        inputs.college_id !== "" ||
+        inputs.email !== "" ||
+        inputs.phone !== "" ||
+        inputs.payment_mode !== "" ||
+        inputs.transaction_id !== "" ||
+        inputs.receiver !== "" ||
+        inputs.date !== ""
+      );
+    };
+
+    setIsDisabled(areAllFieldsFilled());
+  }, [inputs]);
+  const router = useRouter();
+  const handleSubmit = async () => {
+
+    try {
+      if(!isDisabled){
+        toast.error("Please fill all the fields");
+        return;
+      }
+      setIsSubmitted(false);
+      await getData();
+      const pushData = {
+        bill_no: inputs.bill_no.toString(),
+        name: inputs.name,
+        stream: inputs.stream,
+        college_id: inputs.college_id,
+        email: inputs.email,
+        phone: inputs.phone,
+        payment_mode: inputs.payment_mode,
+        transaction_id: inputs.transaction_id,
+        note: inputs.note !== "" ? inputs.note : "N/A",
+        receiver: inputs.receiver,
+        date: inputs.date,
+      };
+
+      // Sending data to the backend using POST method
+      const response = await fetch("http://localhost:5000/generate-bill", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pushData),
+      });
+
+      // Handle the response
+      const result = await response.json();
+
+      // Save data to Supabase
+      if (response?.ok) {
+        const { data, error } = await supabase
+          .from("alumni_bill")
+          .insert(pushData);
+        console.log(data, error);
+      }
+      await getData();
+      router.refresh();
+      setInputs((prevInputs: any) => {
+        return {
+          ...prevInputs,
+          name: "",
+          stream: "",
+          college_id: "",
+          email: "",
+          phone: "",
+          payment_mode: "",
+          transaction_id: "",
+          note: "",
+          receiver: "",
+        };
+      });
+    } catch (e) {
+      console.error(e);
+    }
+    setIsSubmitted(true);
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | any>
+  ) => {
+    const { name, value } = e.target;
+    setInputs((prevInputs: any) => ({
+      ...prevInputs,
+      [name]: value,
+    }));
+  };
+  const getData = async () => {
+    const { data, error }: { data: any; error: any } = await supabase
+      .from("alumni_bill")
+      .select("*")
+      .order("created_at", { ascending: true });
+    setInputs((prevInputs: any) => {
+      return {
+        ...prevInputs,
+        bill_no:
+          parseInt(data?.length > 0 && data[data.length - 1]?.bill_no) + 1 ||
+          "",
+      };
+    });
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+  function formatDate(inputDate: any) {
+    const dateParts = inputDate.split("/");
+    const month = parseInt(dateParts[0]);
+    const day = parseInt(dateParts[1]);
+    const year = dateParts[2];
+
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const getOrdinal = (n: any) => {
+      const s = ["th", "st", "nd", "rd"];
+      const v = n % 100;
+      return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    };
+
+    const formattedDay = getOrdinal(day);
+    const formattedMonth = monthNames[month - 1];
+
+    return `${formattedDay} ${formattedMonth} ${year}`;
+  }
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    <main>
+      <div className="mx-auto flex w-full flex-col items-start  justify-center gap-5 px-2 py-10">
+        <h1 className="w-full text-center font-hollirood text-2xl font-semibold tracking-wider text-regalia">
+          Add Bill
+        </h1>
+        <Toaster position="bottom-right" />
+        <div className="mx-auto w-full max-w-md px-4">
+          <div className="mx-auto flex w-full flex-col justify-center gap-5">
+            <FormElement
+              id="bill_no"
+              name="Bill No"
+              type="text"
+              value={inputs?.bill_no}
+              onChange={handleInputChange}
+              width="100%"
             />
-          </a>
+            <FormElement
+              id="name"
+              name="Name"
+              type="text"
+              value={inputs?.name}
+              onChange={handleInputChange}
+              width="100%"
+            />
+            <FormElement
+              id="stream"
+              name="Stream"
+              type="text"
+              value={inputs?.stream}
+              onChange={handleInputChange}
+              width="100%"
+            />
+            <FormElement
+              id="college_id"
+              name="College ID"
+              type="text"
+              value={inputs?.college_id}
+              onChange={handleInputChange}
+              width="100%"
+            />
+            <FormElement
+              id="email"
+              name="Email"
+              type="text"
+              value={inputs?.email}
+              onChange={handleInputChange}
+              width="100%"
+            />
+            <FormElement
+              id="phone"
+              name="Phone"
+              type="text"
+              value={inputs?.phone}
+              onChange={handleInputChange}
+              width="100%"
+            />
+            <SelectInput
+              options={[
+                "UPI PAYMENT",
+                "DEBIT CARD",
+                "CREDIT CARD",
+                "NET BANKING",
+                "CASH",
+                "BANK TRANSFER",
+              ]}
+              onChange={(e) => {
+                handleInputChange(e);
+              }}
+              value={inputs.payment_mode}
+              name={"Payment Mode"}
+              id={"payment_mode"}
+            />
+            <FormElement
+              id="transaction_id"
+              name="Transaction ID"
+              type="text"
+              value={inputs?.transaction_id}
+              onChange={handleInputChange}
+              width="100%"
+            />
+            <FormElement
+              id="note"
+              name="Note"
+              type="text"
+              value={inputs?.note}
+              onChange={handleInputChange}
+              width="100%"
+            />
+            <SelectInput
+              options={["DEEP DAS", "ARIYAN BHAKAT"]}
+              onChange={(e) => {
+                handleInputChange(e);
+              }}
+              value={inputs.receiver}
+              name={"Receiver"}
+              id={"receiver"}
+            />
+            <FormElement
+              id="date"
+              name="Date"
+              type="text"
+              disabled
+              value={inputs?.date}
+              onChange={handleInputChange}
+              width="100%"
+            />
+          </div>
         </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          onClick={handleSubmit}
+          disabled={!isSubmitted}
+          className={(isDisabled && 'cursor-not-allowed') +
+            " mx-auto w-1/2 cursor-pointer rounded-full border-2 border-[#c9a747] bg-[#c9a747] px-2 py-1 font-semibold text-black hover:border-[#c9a747] hover:bg-black hover:text-[#c9a747] md:w-1/3 md:text-xl" +
+            " " +
+            (!isSubmitted
+              ? "bg-black text-[#c9a747]"
+              : "bg-[#c9a747] text-black")
+          }
         >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+          {isSubmitted ? "Submit" : <ClipLoader color="#c9a747" size={20} />}
+        </button>
       </div>
     </main>
   );
