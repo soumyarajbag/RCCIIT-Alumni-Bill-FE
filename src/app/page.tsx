@@ -68,7 +68,7 @@ export default function Home() {
       };
 
       // Sending data to the backend using POST method
-      const response = await fetch("http://localhost:5000/generate-bill", {
+      const response = await fetch("https://rcciit-alumni-bill-generator-server.onrender.com/generate-bill", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
