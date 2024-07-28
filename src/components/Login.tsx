@@ -32,32 +32,56 @@ const Login = () => {
       <h1 className="text-4xl text-center font-serif font-semibold tracking-wider">
         Alumni Bill Generator
       </h1>
-      {session ? (
-        <button
-        className="bg-white px-5 py-2 text-black font-sem flex flex-row items-center gap-1 justify-center mx-auto rounded-lg hover:bg-sky-500 hover:text-white duration-300"
-          onClick={async () => {
-            await logout();
-            setSession(false);
-            setUser(undefined);
-          }}
-        >
-          Logout
-        </button>
-      ) : (
-        <button
-          onClick={onLogin}
-          className="bg-white px-5 py-2 text-black flex flex-row items-center gap-1 justify-center mx-auto rounded-lg hover:bg-sky-500 hover:text-white duration-300"
-        >
-          <Image
-            src={"/assets/google.jpg"}
-            width={40}
-            height={40}
-            alt=""
-            className="rounded-full"
-          />
-          <h1>Login With Google</h1>
-        </button>
-      )}
+      <div className="flex flex-row items-center gap-5 justify-center w-full mx-auto">
+        <div>
+          {session ? (
+            <button
+              className="bg-white px-5 py-2 text-black font-sem flex flex-row items-center gap-1 justify-center mx-auto rounded-lg hover:bg-sky-500 hover:text-white duration-300"
+              onClick={async () => {
+                await logout();
+                setSession(false);
+                setUser(undefined);
+              }}
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={onLogin}
+              className="bg-white px-5 py-2 text-black flex flex-row items-center gap-1 justify-center mx-auto rounded-lg hover:bg-sky-500 hover:text-white duration-300"
+            >
+              <Image
+                src={"/assets/google.jpg"}
+                width={40}
+                height={40}
+                alt=""
+                className="rounded-full"
+              />
+              <h1>Login With Google</h1>
+            </button>
+          )}
+        </div>
+        {session && (
+          <>
+            <button
+              onClick={() => {
+                router.push("/profile");
+              }}
+              className="bg-sky-500 text-white px-4 py-1 rounded-lg"
+            >
+              Profile
+            </button>
+            <button
+              onClick={() => {
+                router.push("/bill");
+              }}
+              className="bg-sky-500 text-white px-4 py-1 rounded-lg"
+            >
+              Bill
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 };
