@@ -8,3 +8,8 @@ body {
     color: white;
     scroll-behavior: smooth;
   }
+
+  input:disabled {
+    cursor: not-allowed;
+    opacity: 0.5; /* Optional: to make it visually clear it's disabled */
+  }
