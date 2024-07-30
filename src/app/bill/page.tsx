@@ -262,6 +262,9 @@ export default function Home() {
                 "UPI PAYMENT",
                 "DEBIT CARD",
                 "CREDIT CARD",
+                "GOOGLE PAY",
+                "IDFC BANK",
+                "PHONE PE"
                 "NET BANKING",
                 "CASH",
                 "BANK TRANSFER",
