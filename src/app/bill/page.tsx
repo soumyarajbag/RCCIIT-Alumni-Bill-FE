@@ -327,7 +327,7 @@ export default function Home() {
         </div>
         <button
           onClick={handleSubmit}
-          disabled={!isSubmitted || isDisabled}
+          disabled={!isSubmitted}
           className={`mx-auto w-1/2 rounded-full border-2 border-[#c9a747] px-2 py-1 font-semibold text-black hover:border-[#c9a747] hover:bg-black hover:text-[#c9a747] md:w-1/3 md:text-xl ${
             !isSubmitted ? "bg-black text-[#c9a747]" : "bg-[#c9a747] text-black"
           } ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"}`}
