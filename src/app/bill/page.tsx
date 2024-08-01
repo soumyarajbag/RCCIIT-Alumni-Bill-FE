@@ -29,23 +29,24 @@ export default function Home() {
   const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
-    const areAllFieldsFilled = () => {
+    const areAnyFieldsEmpty = () => {
       return (
-        inputs.bill_no !== "" ||
-        inputs.name !== "" ||
-        inputs.stream !== "" ||
-        inputs.college_id !== "" ||
-        inputs.email !== "" ||
-        inputs.phone !== "" ||
-        inputs.payment_mode !== "" ||
-        inputs.transaction_id !== "" ||
-        inputs.receiver !== "" ||
-        inputs.date !== ""
+        inputs.bill_no === "" ||
+        inputs.name === "" ||
+        inputs.stream === "" ||
+        inputs.college_id === "" ||
+        inputs.email === "" ||
+        inputs.phone === "" ||
+        inputs.payment_mode === "" ||
+        inputs.transaction_id === "" ||
+        inputs.receiver === "" ||
+        inputs.date === ""
       );
     };
 
-    setIsDisabled(areAllFieldsFilled());
+    setIsDisabled(areAnyFieldsEmpty());
   }, [inputs]);
+
   console.log(inputs);
   const router = useRouter();
   const user: any = useUser((state) => state.user);
@@ -86,13 +87,16 @@ export default function Home() {
       };
 
       // Sending data to the backend using POST method
-      const response = await fetch("https://rcciit-alumni-bill-generator-server.onrender.com/generate-bill", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(pushData),
-      });
+      const response = await fetch(
+        "https://rcciit-alumni-bill-generator-server.onrender.com/generate-bill",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(pushData),
+        }
+      );
 
       // Handle the response
       const result = await response.json();
@@ -323,15 +327,10 @@ export default function Home() {
         </div>
         <button
           onClick={handleSubmit}
-          disabled={!isSubmitted}
-          className={
-            (isDisabled && "cursor-not-allowed") +
-            " mx-auto w-1/2 cursor-pointer rounded-full border-2 border-[#c9a747] bg-[#c9a747] px-2 py-1 font-semibold text-black hover:border-[#c9a747] hover:bg-black hover:text-[#c9a747] md:w-1/3 md:text-xl" +
-            " " +
-            (!isSubmitted
-              ? "bg-black text-[#c9a747]"
-              : "bg-[#c9a747] text-black")
-          }
+          disabled={!isSubmitted || isDisabled}
+          className={`mx-auto w-1/2 rounded-full border-2 border-[#c9a747] px-2 py-1 font-semibold text-black hover:border-[#c9a747] hover:bg-black hover:text-[#c9a747] md:w-1/3 md:text-xl ${
+            !isSubmitted ? "bg-black text-[#c9a747]" : "bg-[#c9a747] text-black"
+          } ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"}`}
         >
           {isSubmitted ? "Submit" : <ClipLoader color="#c9a747" size={20} />}
         </button>
