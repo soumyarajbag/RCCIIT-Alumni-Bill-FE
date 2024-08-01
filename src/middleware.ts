@@ -19,7 +19,12 @@ export async function middleware(req: NextRequest) {
     }
   }
   if (session) {
-
+    const userRoles = await supabase
+    .from("roles")
+    .select(
+      "*",
+    )
+    .eq("id", session?.user.id);
     const userDetails = await supabase
       .from("users")
       .select()

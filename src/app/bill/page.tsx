@@ -264,7 +264,7 @@ export default function Home() {
                 "CREDIT CARD",
                 "GOOGLE PAY",
                 "IDFC BANK",
-                "PHONE PE"
+                "PHONE PE",
                 "NET BANKING",
                 "CASH",
                 "BANK TRANSFER",

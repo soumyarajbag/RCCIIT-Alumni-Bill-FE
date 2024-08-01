@@ -9,6 +9,78 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bill: {
+        Row: {
+          bill_no: number
+          college_id: string | null
+          created_at: string
+          date: string | null
+          email: string | null
+          id: string
+          name: string | null
+          note: string | null
+          payment_mode: string | null
+          phone: string | null
+          receiver: string | null
+          receiver_id: string | null
+          stream: string | null
+          transaction_id: string | null
+          year: string | null
+        }
+        Insert: {
+          bill_no: number
+          college_id?: string | null
+          created_at?: string
+          date?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          note?: string | null
+          payment_mode?: string | null
+          phone?: string | null
+          receiver?: string | null
+          receiver_id?: string | null
+          stream?: string | null
+          transaction_id?: string | null
+          year?: string | null
+        }
+        Update: {
+          bill_no?: number
+          college_id?: string | null
+          created_at?: string
+          date?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          note?: string | null
+          payment_mode?: string | null
+          phone?: string | null
+          receiver?: string | null
+          receiver_id?: string | null
+          stream?: string | null
+          transaction_id?: string | null
+          year?: string | null
+        }
+        Relationships: []
+      }
+      roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           created_at: string

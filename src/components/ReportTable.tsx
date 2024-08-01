@@ -33,17 +33,6 @@ const ReportTable = ({ registrationData }: { registrationData: any[] }) => {
     }));
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchValue = e.target.value.toLowerCase();
-    const filteredData = registrationData.filter((registration: any) =>
-      Object.values(registration).some(
-        (value) =>
-          typeof value === "string" && value.toLowerCase().includes(searchValue)
-      )
-    );
-    setFilteredResults(filteredData);
-  };
-
   useEffect(() => {
     setLoadingSearch(true);
     const filteredResults = registrationData.filter(
