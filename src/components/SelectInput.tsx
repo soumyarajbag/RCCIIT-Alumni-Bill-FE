@@ -17,25 +17,25 @@ const SelectInput = ({
 }) => {
   return (
     <div className="flex w-full flex-row flex-wrap items-center justify-center gap-2 relative">
-      <label htmlFor="event" className="font-semibold text-sm md:text-xl ">
+      <label htmlFor={id} className="font-semibold text-sm md:text-xl">
         {name} :
       </label>
       <select
         name={id}
         id={id}
+        value={value} // Bind the value here
         className={`py-2 px-4 w-[${
           width ? width : "100%"
-        }] rounded-xl border bg-transparent border-regalia text-regalia active:border-regalia  focus:border-regalia font-semibold`}
+        }] rounded-xl border bg-transparent border-regalia text-regalia active:border-regalia focus:border-regalia font-semibold`}
         onChange={onChange}
       >
         <option id={id} value=""></option>
-        {options && options.map((option: any, index: number) => {
-          return (
+        {options &&
+          options.map((option: any, index: number) => (
             <option key={index} value={option} className="text-black">
               {option}
             </option>
-          );
-        })}
+          ))}
       </select>
     </div>
   );
