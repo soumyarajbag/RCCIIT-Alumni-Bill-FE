@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import FormElement from "@/components/FormElement";
 import { ClipLoader } from "react-spinners";
@@ -11,7 +10,6 @@ import { useUser } from "@/lib/store/user";
 import { getUserInfo } from "@/utils/functions/getUserInfo";
 
 export default function Home() {
-  const [billData, setBillData] = useState("");
   const [inputs, setInputs] = useState({
     bill_no: "",
     name: "",

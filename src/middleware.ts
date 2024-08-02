@@ -13,18 +13,40 @@ export async function middleware(req: NextRequest) {
   if (!session) {
     if (
       url.pathname.startsWith("/bill") ||
-      url.pathname.startsWith("/profile")
+      url.pathname.startsWith("/profile") ||
+      url.pathname.startsWith("/report")
     ) {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }
   if (session) {
-    const userRoles = await supabase
-    .from("roles")
-    .select(
-      "*",
-    )
-    .eq("id", session?.user.id);
+    const { data, error } = await supabase
+      .from("roles")
+      .select("*")
+      .eq("id", session?.user.id);
+    let superAdmin = false;
+    let volunteer = false;
+    if (data) {
+      for (const obj of data!) {
+        if (obj.role === "super_admin") {
+          superAdmin = true;
+        } else if (obj.role === "volunteer") {
+          volunteer = true;
+        } else {
+          superAdmin = false;
+          volunteer = false;
+        }
+      }
+    }
+    if (!superAdmin && url.pathname.startsWith("/report")) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+    if ((volunteer || superAdmin) && url.pathname.startsWith("/bill")) {
+      return NextResponse.next();
+    }
+    if ((!volunteer || !superAdmin) && url.pathname.startsWith("/bill")) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
     const userDetails = await supabase
       .from("users")
       .select()

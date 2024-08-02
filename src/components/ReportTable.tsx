@@ -54,7 +54,7 @@ const ReportTable = ({ registrationData }: { registrationData: any[] }) => {
           .includes(inputs.mode.toLowerCase()) &&
         registration.date.toLowerCase().includes(inputs.date.toLowerCase()) &&
         registration.receiver
-          .toLowerCase()
+          ?.toLowerCase()
           .includes(inputs.receiver.toLowerCase())
     );
     setFilteredResults(filteredResults);

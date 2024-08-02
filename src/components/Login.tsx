@@ -1,6 +1,7 @@
 "use client";
 import { supabase } from "@/lib/client";
 import { useUser } from "@/lib/store/user";
+import { getRoles } from "@/utils/functions/getRoles";
 import { login } from "@/utils/functions/login";
 import { logout } from "@/utils/functions/logout";
 import Image from "next/image";
@@ -9,6 +10,8 @@ import React, { useEffect, useState } from "react";
 
 const Login = () => {
   const setUser = useUser((state) => state.setUser);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isVolunteer, setIsVolunteer] = useState(false);
   const user = useUser((state) => state.user);
   const [session, setSession] = useState(false);
   const router = useRouter();
@@ -23,6 +26,19 @@ const Login = () => {
         setSession(true);
       } else {
         setSession(false);
+      }
+    };
+    getData();
+  }, []);
+  useEffect(() => {
+    const getData = async () => {
+      const roles = await getRoles();
+      if (roles?.includes("super_admin")) {
+        setIsAdmin(true);
+        setIsVolunteer(true);
+      } else if (roles?.includes("volunteer")) {
+        setIsVolunteer(true);
+        setIsAdmin(false);
       }
     };
     getData();
@@ -71,14 +87,22 @@ const Login = () => {
             >
               Profile
             </button>
-            <button
+           {isVolunteer && <button
               onClick={() => {
                 router.push("/bill");
               }}
               className="bg-sky-500 text-white px-4 py-1 rounded-lg"
             >
               Bill
-            </button>
+            </button>}
+         {isAdmin &&   <button
+              onClick={() => {
+                router.push("/report");
+              }}
+              className="bg-sky-500 text-white px-4 py-1 rounded-lg"
+            >
+              Report
+            </button>}
           </>
         )}
       </div>
