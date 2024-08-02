@@ -87,22 +87,26 @@ const Login = () => {
             >
               Profile
             </button>
-           {isVolunteer && <button
-              onClick={() => {
-                router.push("/bill");
-              }}
-              className="bg-sky-500 text-white px-4 py-1 rounded-lg"
-            >
-              Bill
-            </button>}
-         {isAdmin &&   <button
-              onClick={() => {
-                router.push("/report");
-              }}
-              className="bg-sky-500 text-white px-4 py-1 rounded-lg"
-            >
-              Report
-            </button>}
+            {isVolunteer && (
+              <button
+                onClick={() => {
+                  router.push("/bill");
+                }}
+                className="bg-sky-500 text-white px-4 py-1 rounded-lg"
+              >
+                Bill
+              </button>
+            )}
+            {isAdmin && (
+              <button
+                onClick={() => {
+                  router.push("/report");
+                }}
+                className="bg-sky-500 text-white px-4 py-1 rounded-lg"
+              >
+                Report
+              </button>
+            )}
           </>
         )}
       </div>

@@ -9,8 +9,8 @@ export const getRoles = async () => {
       .from("roles")
       .select("*")
       .eq("id", session?.user.id);
-     const roles = data?.map((obj: any) => obj.role);
-      return roles;
+    const roles = data?.map((obj: any) => obj.role);
+    return roles;
   } catch (e) {
     console.log(e);
   }
