@@ -48,6 +48,14 @@ export default function Home() {
   console.log(inputs);
   const router = useRouter();
   const user: any = useUser((state) => state.user);
+  useEffect(() => {
+    setInputs((prevInputs: any) => {
+      return {
+        ...prevInputs,
+        receiver: user?.name!,
+      };
+    });
+  }, [user]);
 
   const setUser = useUser((state) => state.setUser);
 
