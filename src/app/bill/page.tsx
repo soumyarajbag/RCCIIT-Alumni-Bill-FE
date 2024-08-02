@@ -28,8 +28,8 @@ export default function Home() {
 
   useEffect(() => {
     const areAnyFieldsEmpty = () => {
+      console.log(inputs);
       return (
-        inputs.bill_no === "" ||
         inputs.name === "" ||
         inputs.stream === "" ||
         inputs.college_id === "" ||
@@ -37,7 +37,6 @@ export default function Home() {
         inputs.phone === "" ||
         inputs.payment_mode === "" ||
         inputs.transaction_id === "" ||
-        inputs.receiver === "" ||
         inputs.date === ""
       );
     };
@@ -69,6 +68,7 @@ export default function Home() {
   const handleSubmit = async () => {
     try {
       console.log(isDisabled);
+      console.log(inputs);
       if (isDisabled) {
         toast.error("Please fill all the fields");
         return;
@@ -91,28 +91,27 @@ export default function Home() {
         date: inputs.date,
       };
 
-      // Sending data to the backend using POST method
-      const response = await fetch(
-        "https://rcciit-alumni-bill-generator-server.onrender.com/generate-bill",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(pushData),
-        }
-      );
+      // // Sending data to the backend using POST method
+      // const response = await fetch(
+      //   "https://rcciit-alumni-bill-generator-server.onrender.com/generate-bill",
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify(pushData),
+      //   }
+      // );
 
-      // Handle the response
-      const result = await response.json();
+      // // Handle the response
+      // const result = await response.json();
 
-      // Save data to Supabase
-      if (response?.ok) {
-        const { data, error } = await supabase.from("bill").insert(pushData);
-        console.log(data, error);
-      }
+      // // Save data to Supabase
+      // if (response?.ok) {
+      //   const { data, error } = await supabase.from("bill").insert(pushData);
+      //   console.log(data, error);
+      // }
       await getData();
-      router.refresh();
       setInputs((prevInputs: any) => {
         return {
           ...prevInputs,
