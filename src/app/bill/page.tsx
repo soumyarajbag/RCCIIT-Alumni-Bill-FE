@@ -41,11 +41,9 @@ export default function Home() {
         inputs.date === ""
       );
     };
-
     setIsDisabled(areAnyFieldsEmpty());
   }, [inputs]);
 
-  console.log(inputs);
   const router = useRouter();
   const user: any = useUser((state) => state.user);
   useEffect(() => {
@@ -70,7 +68,8 @@ export default function Home() {
   }, []);
   const handleSubmit = async () => {
     try {
-      if (!isDisabled) {
+      console.log(isDisabled);
+      if (isDisabled) {
         toast.error("Please fill all the fields");
         return;
       }
@@ -298,6 +297,7 @@ export default function Home() {
               id="note"
               name="Note"
               type="text"
+              placeholder="Optional"
               value={inputs?.note}
               onChange={handleInputChange}
               width="100%"
