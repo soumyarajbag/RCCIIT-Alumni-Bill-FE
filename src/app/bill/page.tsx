@@ -146,7 +146,8 @@ export default function Home() {
     const { data, error }: { data: any; error: any } = await supabase
       .from("bill")
       .select("*")
-      .order("created_at", { ascending: true });
+      .order("bill_no", { ascending: true });
+      console.log(data)
     setInputs((prevInputs: any) => {
       return {
         ...prevInputs,
