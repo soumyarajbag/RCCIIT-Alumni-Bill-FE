@@ -91,26 +91,26 @@ export default function Home() {
         date: inputs.date,
       };
 
-      // // Sending data to the backend using POST method
-      // const response = await fetch(
-      //   "https://rcciit-alumni-bill-generator-server.onrender.com/generate-bill",
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(pushData),
-      //   }
-      // );
+      // Sending data to the backend using POST method
+      const response = await fetch(
+        "https://rcciit-alumni-bill-generator-server.onrender.com/generate-bill",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(pushData),
+        }
+      );
 
-      // // Handle the response
-      // const result = await response.json();
+      // Handle the response
+      const result = await response.json();
 
-      // // Save data to Supabase
-      // if (response?.ok) {
-      //   const { data, error } = await supabase.from("bill").insert(pushData);
-      //   console.log(data, error);
-      // }
+      // Save data to Supabase
+      if (response?.ok) {
+        const { data, error } = await supabase.from("bill").insert(pushData);
+        console.log(data, error);
+      }
       await getData();
       setInputs((prevInputs: any) => {
         return {
